@@ -13,6 +13,7 @@
 #include "AABB.h"
 #include "OBB.h"
 #include "Bezier.h"
+#include "CatmullromSpline.h"
 
 const char kWindowTitle[] = "LE1A_16_マキユキノリ_タイトル";
 
@@ -94,6 +95,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{-0.8f, 0.58f, 1.0f},
 		{1.76f, 1.0f, -0.3f},
 		{0.94f, -0.7f, 2.3f}
+	};
+
+	Vector3 controlPoints[4] = {
+		{-0.8f, 0.58f, 1.0f},
+		{1.76f, 1.0f, -0.3f},
+		{0.94f, -0.7f, 2.3f},
+		{-0.53f, -0.26f, -0.15f},
 	};
 
 	// カメラの位置と角度
@@ -197,6 +205,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("ControlPoint1", &controlPoint[1].x, 0.01f);
 		ImGui::DragFloat3("ControlPoint2", &controlPoint[2].x, 0.01f);
 
+		ImGui::DragFloat3("ControlPoint0", &controlPoints[0].x, 0.01f);
+		ImGui::DragFloat3("ControlPoint1", &controlPoints[1].x, 0.01f);
+		ImGui::DragFloat3("ControlPoint2", &controlPoints[2].x, 0.01f);
+		ImGui::DragFloat3("ControlPoint3", &controlPoints[3].x, 0.01f);
+
 		ImGui::End();
 
 
@@ -270,7 +283,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawOBB(obb, viewProjectionMatrix, viewportMatrix, WHITE);
 		}*/
 
-		DrawBezier(controlPoint[0], controlPoint[1], controlPoint[2], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
+		//DrawBezier(controlPoint[0], controlPoint[1], controlPoint[2], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
+
+		DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
 
 		///
 		/// ↑描画処理ここまで
