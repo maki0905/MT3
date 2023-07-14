@@ -12,6 +12,7 @@
 #include "Triangle.h"
 #include "AABB.h"
 #include "OBB.h"
+#include "Bezier.h"
 
 const char kWindowTitle[] = "LE1A_16_マキユキノリ_タイトル";
 
@@ -89,6 +90,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.size{0.5f, 0.5f, 0.5f}
 	};
 
+	Vector3 controlPoint[3] = {
+		{-0.8f, 0.58f, 1.0f},
+		{1.76f, 1.0f, -0.3f},
+		{0.94f, -0.7f, 2.3f}
+	};
 
 	// カメラの位置と角度
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
@@ -187,6 +193,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		obb.orientations[2].y = rotateMatrix.m[2][1];
 		obb.orientations[2].z = rotateMatrix.m[2][2];
 
+		ImGui::DragFloat3("ControlPoint0", &controlPoint[0].x, 0.01f);
+		ImGui::DragFloat3("ControlPoint1", &controlPoint[1].x, 0.01f);
+		ImGui::DragFloat3("ControlPoint2", &controlPoint[2].x, 0.01f);
+
 		ImGui::End();
 
 
@@ -260,6 +270,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawOBB(obb, viewProjectionMatrix, viewportMatrix, WHITE);
 		}*/
 
+		DrawBezier(controlPoint[0], controlPoint[1], controlPoint[2], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
 
 		///
 		/// ↑描画処理ここまで
@@ -340,41 +351,7 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 }
 
 
-void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
-{
-	const uint32_t kSubdivision = 15; // 分割数
-	const float kLonEvery = float(M_PI / float(kSubdivision)); // 経度分割1つ分の角度
-	const float kLatEvery = float(2.0f * M_PI / float(kSubdivision)); // 緯度分割1つ分の角度
-	Vector3 center = sphere.center;
-	float radius = sphere.radius;
-	// 緯度の方向に分割 -π/2 ~ π/2
-	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-		float lat = float(-M_PI / 2.0f) + float(kLatEvery * float(latIndex)); // 現在の緯度
-		// 経度の方向に分割 0 ~ 2π
-		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-			float lon = float(float(lonIndex) * kLonEvery); // 現在の経度
-			// world座標系でのa,b,cを求める
-			Vector3 a, b, c;
-			a = Multiply(radius, { std::cos(lat) * std::cos(lon), std::sin(lat), std::cos(lat) * std::sin(lon) });
-			b = Multiply(radius, { std::cos(lat + kLatEvery) * std::cos(lon), std::sin(lat + kLatEvery), std::cos(lat + kLatEvery) * std::sin(lon) });
-			c = Multiply(radius, { std::cos(lat) * std::cos(lon + kLonEvery), std::sin(lat), std::cos(lat) * std::sin(lon + kLonEvery) });
-			// a, b, c, をScreen座標系まで変換
-			Vector3 ndcVertex = Transform(Add(a, center), viewProjectionMatrix);
-			a = Transform(ndcVertex, viewportMatrix);
-			ndcVertex = Transform(Add(b, center), viewProjectionMatrix);
-			b = Transform(ndcVertex, viewportMatrix);
-			ndcVertex = Transform(Add(c, center), viewProjectionMatrix);
-			c = Transform(ndcVertex, viewportMatrix);
-			// ab, acで線を引く
-			Novice::DrawLine(int(a.x), int(a.y), int(b.x), int(b.y), color);
-			Novice::DrawLine(int(a.x), int(a.y), int(c.x), int(c.y), color);
-		}
 
-	}
-
-
-
-}
 
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
 	Vector3 center = Multiply(plane.distance, plane.normal);
