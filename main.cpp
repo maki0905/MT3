@@ -55,10 +55,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//Plane plane = { {0.0f, 1.0f, 0.0f}, 0.5f };
 
-	Segment segment = {
+	/*Segment segment = {
 		.origin{0.0f, -0.6f, 0.0f},
 		.diff{0.0f, 0.5f, 0.0f}
-	};
+	};*/
 
 	/*Triangle triangle = {
 		{
@@ -150,19 +150,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
 		//plane.normal = Normalize(plane.normal);
 		//ImGui::DragFloat("Plane.distance", &plane.distance, 0.01f);
-		ImGui::DragFloat3("Line.origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("Line.diff", &segment.diff.x, 0.01f);
+		/*ImGui::DragFloat3("Line.origin", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("Line.diff", &segment.diff.x, 0.01f);*/
 		/*ImGui::DragFloat3("Triangle.vertices[0]", &triangle.vertices[0].x, 0.01f);
 		ImGui::DragFloat3("Triangle.vertices[1]", &triangle.vertices[1].x, 0.01f);
 		ImGui::DragFloat3("Triangle.vertices[2]", &triangle.vertices[2].x, 0.01f);*/
-		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
+		/*ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
 		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
 		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
 		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
 		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
 		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
 		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
-		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
+		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);*/
 		/*ImGui::DragFloat3("aabb2.min", &aabb2.min.x, 0.01f);
 		ImGui::DragFloat3("aabb2.max", &aabb2.max.x, 0.01f);
 		aabb2.min.x = (std::min)(aabb2.min.x, aabb2.max.x);
@@ -252,13 +252,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawOBB(obb, viewProjectionMatrix, viewportMatrix, WHITE);
 		}*/
 
-		DrawSegment(segment, viewProjectionMatrix, viewportMatrix, WHITE);
+		/*DrawSegment(segment, viewProjectionMatrix, viewportMatrix, WHITE);
 		if (IsCollision(obb, segment)) {
 			DrawOBB(obb, viewProjectionMatrix, viewportMatrix, RED);
 		}
 		else {
 			DrawOBB(obb, viewProjectionMatrix, viewportMatrix, WHITE);
-		}
+		}*/
 
 
 		///
