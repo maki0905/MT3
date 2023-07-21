@@ -26,6 +26,8 @@ void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewporMatrix);
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+void DrawArm(const Matrix4x4& Shoulder, const Matrix4x4& Elbow, const Matrix4x4& Hand, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -104,6 +106,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{-0.53f, -0.26f, -0.15f},
 	};
 
+	Vector3 translates[3] = {
+		{0.2f, 1.0f, 0.0f},
+		{0.4f, 0.0f, 0.0f},
+		{0.3f, 0.0f, 0.0f},
+	};
+	Vector3 rotates[3] = {
+		{0.0f, 0.0f, -6.8f},
+		{0.0f, 0.0f, -1.4f},
+		{0.0f, 0.0f, 0.0f},
+	};
+	Vector3 scales[3] = {
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f}
+	};
+
 	// カメラの位置と角度
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
 	Vector3 cameraRotate{ 0.26f, 0.0f, 0.0f };
@@ -125,8 +143,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-
-
+		
 
 		if (keys[DIK_Q] != 0 && preKeys[DIK_Q] == 0) {
 			if (isDebugCameraActive == false) {
@@ -185,7 +202,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		aabb2.max.y = (std::max)(aabb2.min.y, aabb2.max.y);
 		aabb2.min.z = (std::min)(aabb2.min.z, aabb2.max.z);
 		aabb2.max.z = (std::max)(aabb2.min.z, aabb2.max.z);*/
-		ImGui::DragFloat3("OBB.center", &obb.center.x, 0.01f);
+		/*ImGui::DragFloat3("OBB.center", &obb.center.x, 0.01f);
 		ImGui::DragFloat3("OBB.size", &obb.size.x, 0.01f);
 		ImGui::DragFloat3("rotate", &rotate.x, 0.01f);
 		Matrix4x4 rotateMatrix = MakeRotate(rotate);
@@ -208,11 +225,47 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("ControlPoint0", &controlPoints[0].x, 0.01f);
 		ImGui::DragFloat3("ControlPoint1", &controlPoints[1].x, 0.01f);
 		ImGui::DragFloat3("ControlPoint2", &controlPoints[2].x, 0.01f);
-		ImGui::DragFloat3("ControlPoint3", &controlPoints[3].x, 0.01f);
+		ImGui::DragFloat3("ControlPoint3", &controlPoints[3].x, 0.01f);*/
+
+		ImGui::DragFloat3("Shoulder : translate", &translates[0].x, 0.01f);
+		ImGui::DragFloat3("Shoulder : rotate", &rotates[0].x, 0.01f);
+		ImGui::DragFloat3("Shoulder : scale", &scales[0].x, 0.01f);
+		ImGui::DragFloat3("Elbow : translate", &translates[1].x, 0.01f);
+		ImGui::DragFloat3("Elbow : rotate", &rotates[1].x, 0.01f);
+		ImGui::DragFloat3("Elbow : scale", &scales[1].x, 0.01f);
+		ImGui::DragFloat3("Head : translate", &translates[2].x, 0.01f);
+		ImGui::DragFloat3("Head : rotate", &rotates[2].x, 0.01f);
+		ImGui::DragFloat3("Head : scale", &scales[2].x, 0.01f);
 
 		ImGui::End();
 
-
+		Matrix4x4 worldMatrix[3];
+		for (int i = 0; i < 3; i++) {
+			worldMatrix[i] = MakeIdentity4x4();
+		}
+		worldMatrix[0] = MakeAffineMatrix(scales[0], rotates[0], translates[0]);
+		worldMatrix[1] = MakeAffineMatrix(scales[1], rotates[1], translates[1]);
+		worldMatrix[1] = Multiply(worldMatrix[1], worldMatrix[0]);
+		worldMatrix[2] = MakeAffineMatrix(scales[2], rotates[2], translates[2]);
+		worldMatrix[2] = Multiply(worldMatrix[2], worldMatrix[1]);
+		/*worldMatrix[1].m[0][0] = Transform(scales[1], worldMatrix[0]).x;
+		worldMatrix[1].m[0][1] = Transform(scales[1], worldMatrix[0]).y;
+		worldMatrix[1].m[0][2] = Transform(scales[1], worldMatrix[0]).z;
+		worldMatrix[1].m[1][0] = Transform(rotates[1], worldMatrix[0]).x;
+		worldMatrix[1].m[1][1] = Transform(rotates[1], worldMatrix[0]).y;
+		worldMatrix[1].m[1][2] = Transform(rotates[1], worldMatrix[0]).z;
+		worldMatrix[1].m[2][0] = Transform(translates[1], worldMatrix[0]).x;
+		worldMatrix[1].m[2][1] = Transform(translates[1], worldMatrix[0]).y;
+		worldMatrix[1].m[2][2] = Transform(translates[1], worldMatrix[0]).z;
+		worldMatrix[2].m[0][0] = Transform(scales[2], worldMatrix[1]).x;
+		worldMatrix[2].m[0][1] = Transform(scales[2], worldMatrix[1]).y;
+		worldMatrix[2].m[0][2] = Transform(scales[2], worldMatrix[1]).z;
+		worldMatrix[2].m[1][0] = Transform(rotates[2], worldMatrix[1]).x;
+		worldMatrix[2].m[1][1] = Transform(rotates[2], worldMatrix[1]).y;
+		worldMatrix[2].m[1][2] = Transform(rotates[2], worldMatrix[1]).z;
+		worldMatrix[2].m[2][0] = Transform(translates[2], worldMatrix[1]).x;
+		worldMatrix[2].m[2][1] = Transform(translates[2], worldMatrix[1]).y;
+		worldMatrix[2].m[2][2] = Transform(translates[2], worldMatrix[1]).z;*/
 
 		///
 		/// ↑更新処理ここまで
@@ -285,7 +338,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//DrawBezier(controlPoint[0], controlPoint[1], controlPoint[2], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
 
-		DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
+		//DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
+
+		DrawArm(worldMatrix[0], worldMatrix[1], worldMatrix[2], viewProjectionMatrix, viewportMatrix);
 
 		///
 		/// ↑描画処理ここまで
@@ -389,3 +444,42 @@ void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const 
 	Novice::DrawLine(int(points[3].x), int(points[3].y), int(points[0].x), int(points[0].y), color);
 }
 
+void DrawArm(const Matrix4x4& Shoulder, const Matrix4x4& Elbow, const Matrix4x4& Hand, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix) {
+	
+	Matrix4x4 S_E = Subtract(Elbow, Shoulder);
+	Matrix4x4 E_H = Subtract(Hand, Elbow);
+	Segment segment[2] = {
+		{
+			.origin{Shoulder.m[3][0], Shoulder.m[3][1], Shoulder.m[3][2]},
+			.diff{S_E.m[3][0], S_E.m[3][1], S_E.m[3][2]}
+
+		},
+		{
+			.origin{Elbow.m[3][0], Elbow.m[3][1], Elbow.m[3][2]},
+			.diff{E_H.m[3][0], E_H.m[3][1], E_H.m[3][2]}
+		},
+	};
+	DrawSegment(segment[0], viewProjectionMatrix, viewportMatrix, WHITE);
+	DrawSegment(segment[1], viewProjectionMatrix, viewportMatrix, WHITE);
+
+
+	Sphere sphere[3] = {
+		{
+			.center{Shoulder.m[3][0], Shoulder.m[3][1], Shoulder.m[3][2]},
+			.radius{0.1f}
+		},
+		{
+			.center{Elbow.m[3][0], Elbow.m[3][1], Elbow.m[3][2]},
+			.radius{0.1f}
+		},
+		{
+			.center{Hand.m[3][0], Hand.m[3][1], Hand.m[3][2]},
+			.radius{0.1f}
+		},
+
+	};
+	
+	DrawSphere(sphere[0], viewProjectionMatrix, viewportMatrix, RED);
+	DrawSphere(sphere[1], viewProjectionMatrix, viewportMatrix, GREEN);
+	DrawSphere(sphere[2], viewProjectionMatrix, viewportMatrix, BLUE);
+}

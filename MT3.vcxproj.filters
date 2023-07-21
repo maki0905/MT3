@@ -59,6 +59,18 @@
     <ClCompile Include="MathFunction.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Bezier.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="CatmullromSpline.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Lerp.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -140,5 +152,8 @@
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="MathFunction.h" />
+    <ClInclude Include="Bezier.h" />
+    <ClInclude Include="CatmullromSpline.h" />
+    <ClInclude Include="Lerp.h" />
   </ItemGroup>
 </Project>
