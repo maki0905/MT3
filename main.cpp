@@ -267,7 +267,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("ControlPoint2", &controlPoints[2].x, 0.01f);
 		ImGui::DragFloat3("ControlPoint3", &controlPoints[3].x, 0.01f);*/
 
-		ImGui::DragFloat3("Shoulder : translate", &translates[0].x, 0.01f);
+		/*ImGui::DragFloat3("Shoulder : translate", &translates[0].x, 0.01f);
 		ImGui::DragFloat3("Shoulder : rotate", &rotates[0].x, 0.01f);
 		ImGui::DragFloat3("Shoulder : scale", &scales[0].x, 0.01f);
 		ImGui::DragFloat3("Elbow : translate", &translates[1].x, 0.01f);
@@ -275,7 +275,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("Elbow : scale", &scales[1].x, 0.01f);
 		ImGui::DragFloat3("Head : translate", &translates[2].x, 0.01f);
 		ImGui::DragFloat3("Head : rotate", &rotates[2].x, 0.01f);
-		ImGui::DragFloat3("Head : scale", &scales[2].x, 0.01f);
+		ImGui::DragFloat3("Head : scale", &scales[2].x, 0.01f);*/
 
 		ImGui::Text("c:%f, %f, %f", c.x, c.y, c.z);
 		ImGui::Text("d:%f, %f, %f", d.x, d.y, d.z);
