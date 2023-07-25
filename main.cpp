@@ -28,6 +28,24 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 void DrawArm(const Matrix4x4& Shoulder, const Matrix4x4& Elbow, const Matrix4x4& Hand, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
+// 二項演算子
+Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
+Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtract(v1, v2); }
+Vector3 operator*(float s, const Vector3& v) { return Multiply(s, v); }
+Vector3 operator*(const Vector3& v, float s) { return s * v; }
+Vector3 operator/(const Vector3& v, float s) { return Multiply((1.0f / s), v); }
+Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2) { return Add(m1, m2); }
+Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2) { return Subtract(m1, m2); }
+Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2) { return Multiply(m1, m2); }
+
+// 単項演算子
+Vector3 operator-(const Vector3& v) { return { -v.x, -v.y, -v.z }; }
+Vector3 operator+(const Vector3& v) { return v; }
+
+// 複合代入演算子
+
+
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -72,17 +90,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 	};*/
 
-	AABB aabb1{
+	/*AABB aabb1{
 		.min{-0.5f, -0.5f, -0.5f},
 		.max{0.5f, 0.5f, 0.5f}
-	};
+	};*/
 	/*AABB aabb2{
 		.min{0.2f, 0.2f, 0.2f},
 		.max{1.0f, 1.0f, 1.0f}
 	};*/
 
-	Vector3 rotate{ 0.0f, 0.0f, 0.0f };
-	OBB obb{
+	//Vector3 rotate{ 0.0f, 0.0f, 0.0f };
+	/*OBB obb{
 		.center{-1.0f, 0.0f, 0.0f},
 		.orientations =
 		{
@@ -91,13 +109,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			{0.0f, 0.0f, 1.0f},
 		},
 		.size{0.5f, 0.5f, 0.5f}
-	};
+	};*/
 
-	Vector3 controlPoint[3] = {
+	/*Vector3 controlPoint[3] = {
 		{-0.8f, 0.58f, 1.0f},
 		{1.76f, 1.0f, -0.3f},
 		{0.94f, -0.7f, 2.3f}
-	};
+	};*/
 
 	Vector3 controlPoints[4] = {
 		{-0.8f, 0.58f, 1.0f},
@@ -174,7 +192,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 		}
 
-
+		Vector3 a{ 0.2f, 1.0f, 0.0f };
+		Vector3 b{ 2.4f, 3.1f, 1.2f };
+		Vector3 c = a + b;
+		Vector3 d = a - b;
+		Vector3 e = a * 2.4f;
+		Vector3 f = a / 2.0f;
+		Vector3 g = -a;
+		Vector3 rotate{ 0.4f, 1.43f, -0.8f };
+		Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
+		Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
+		Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
+		Matrix4x4 rotateMatrix = rotateXMatrix * rotateYMatrix * rotateZMatrix;
+		Matrix4x4 addMatrix = rotateXMatrix + rotateYMatrix;
+		Matrix4x4 subMatrix = rotateXMatrix - rotateYMatrix;
+		Vector3 h = {1.0f, 1.0f, 1.0f};
+		h += a;
+		Vector3 j = { 1.0f, 1.0f, 1.0f };
+		j -= a;
+		Vector3 k = { 1.0f, 1.0f, 1.0f };
+		k *= 2.0f;
+		Vector3 l = { 1.0f, 1.0f, 1.0f };
+		l /= 5.0f;
+ 
 		ImGui::Begin("Window");
 		/*ImGui::DragFloat3("SpherCenter1", &sphere[0].center.x, 0.01f);
 		ImGui::DragFloat("SpherRadius1", &sphere[0].radius, 0.01f);*/
@@ -236,6 +276,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("Head : translate", &translates[2].x, 0.01f);
 		ImGui::DragFloat3("Head : rotate", &rotates[2].x, 0.01f);
 		ImGui::DragFloat3("Head : scale", &scales[2].x, 0.01f);
+
+		ImGui::Text("c:%f, %f, %f", c.x, c.y, c.z);
+		ImGui::Text("d:%f, %f, %f", d.x, d.y, d.z);
+		ImGui::Text("e:%f, %f, %f", e.x, e.y, e.z);
+		ImGui::Text("f:%f, %f, %f", f.x, f.y, f.z);
+		ImGui::Text("g:%f, %f, %f", g.x, g.y, g.z);
+		ImGui::Text("h:%f, %f, %f", h.x, h.y, h.z);
+		ImGui::Text("j:%f, %f, %f", j.x, j.y, j.z);
+		ImGui::Text("k:%f, %f, %f", k.x, k.y, k.z);
+		ImGui::Text("l:%f, %f, %f", l.x, l.y, l.z);
+		ImGui::Text("matrix:\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+			rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2],
+			rotateMatrix.m[0][3], rotateMatrix.m[1][0], rotateMatrix.m[1][1],
+			rotateMatrix.m[1][2], rotateMatrix.m[1][3], rotateMatrix.m[2][0],
+			rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3],
+			rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2],
+			rotateMatrix.m[3][3]);
+		ImGui::Text("matrix:\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+			addMatrix.m[0][0], addMatrix.m[0][1], addMatrix.m[0][2],
+			addMatrix.m[0][3], addMatrix.m[1][0], addMatrix.m[1][1],
+			addMatrix.m[1][2], addMatrix.m[1][3], addMatrix.m[2][0],
+			addMatrix.m[2][1], addMatrix.m[2][2], addMatrix.m[2][3],
+			addMatrix.m[3][0], addMatrix.m[3][1], addMatrix.m[3][2],
+			addMatrix.m[3][3]);
+		ImGui::Text("matrix:\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+			subMatrix.m[0][0], subMatrix.m[0][1], subMatrix.m[0][2],
+			subMatrix.m[0][3], subMatrix.m[1][0], subMatrix.m[1][1],
+			subMatrix.m[1][2], subMatrix.m[1][3], subMatrix.m[2][0],
+			subMatrix.m[2][1], subMatrix.m[2][2], subMatrix.m[2][3],
+			subMatrix.m[3][0], subMatrix.m[3][1], subMatrix.m[3][2],
+			subMatrix.m[3][3]);
 
 		ImGui::End();
 
@@ -466,15 +537,15 @@ void DrawArm(const Matrix4x4& Shoulder, const Matrix4x4& Elbow, const Matrix4x4&
 	Sphere sphere[3] = {
 		{
 			.center{Shoulder.m[3][0], Shoulder.m[3][1], Shoulder.m[3][2]},
-			.radius{0.1f}
+			.radius{0.05f}
 		},
 		{
 			.center{Elbow.m[3][0], Elbow.m[3][1], Elbow.m[3][2]},
-			.radius{0.1f}
+			.radius{0.05f}
 		},
 		{
 			.center{Hand.m[3][0], Hand.m[3][1], Hand.m[3][2]},
-			.radius{0.1f}
+			.radius{0.05f}
 		},
 
 	};
