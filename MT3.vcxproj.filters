@@ -74,6 +74,9 @@
     <ClCompile Include="Operator.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -159,5 +162,6 @@
     <ClInclude Include="CatmullromSpline.h" />
     <ClInclude Include="Lerp.h" />
     <ClInclude Include="Operator.h" />
+    <ClInclude Include="Physics.h" />
   </ItemGroup>
 </Project>

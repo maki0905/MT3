@@ -14,6 +14,7 @@
 #include "OBB.h"
 #include "Bezier.h"
 #include "CatmullromSpline.h"
+#include "Physics.h"
 
 const char kWindowTitle[] = "LE1A_16_マキユキノリ_タイトル";
 
@@ -140,10 +141,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{1.0f, 1.0f, 1.0f}
 	};
 
+	Spring spring{};
+	spring.anchor = { 0.0f, 0.0f, 0.0f };
+	spring.naturallength = 1.0f;
+	spring.stiffness = 100.0f;
+	spring.dampingCoefficient = 2.0f;
+
+	Ball ball{};
+	ball.position = { 1.2f, 0.0f, 0.0f };
+	ball.mass = 2.0f;
+	ball.radius = 0.05f;
+	ball.color = BLUE;
+
+	float deltaTime = 1.0f / 60.0f;
+
 	// カメラの位置と角度
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
 	Vector3 cameraRotate{ 0.26f, 0.0f, 0.0f };
 	Matrix4x4 cameraMatrix = MakeAffineMatrix({ 1.0f, 1.0f, 1.0f }, cameraRotate, cameraTranslate);
+
+	bool start = false;
 
 	// キー入力結果を受け取る箱
 	char keys[256] = { 0 };
@@ -192,7 +209,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 		}
 
-		Vector3 a{ 0.2f, 1.0f, 0.0f };
+		if (start) {
+			Vector3 diff = ball.position - spring.anchor;
+			float length = Length(diff);
+			if (length != 0.0f) {
+				Vector3 direction = Normalize(diff);
+				Vector3 restPosition = spring.anchor + direction * spring.naturallength;
+				Vector3 displacement = length * (ball.position - restPosition);
+				Vector3 restoringForce = -spring.stiffness * displacement;
+				Vector3 dampingForce = -spring.dampingCoefficient * ball.velocity;
+				Vector3 force = restoringForce + dampingForce;
+				ball.acceleration = force / ball.mass;
+			}
+
+			ball.velocity += ball.acceleration * deltaTime;
+			ball.position += ball.velocity * deltaTime;
+		}
+		
+
+		/*Vector3 a{ 0.2f, 1.0f, 0.0f };
 		Vector3 b{ 2.4f, 3.1f, 1.2f };
 		Vector3 c = a + b;
 		Vector3 d = a - b;
@@ -213,7 +248,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Vector3 k = { 1.0f, 1.0f, 1.0f };
 		k *= 2.0f;
 		Vector3 l = { 1.0f, 1.0f, 1.0f };
-		l /= 5.0f;
+		l /= 5.0f;*/
  
 		ImGui::Begin("Window");
 		/*ImGui::DragFloat3("SpherCenter1", &sphere[0].center.x, 0.01f);
@@ -277,7 +312,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("Head : rotate", &rotates[2].x, 0.01f);
 		ImGui::DragFloat3("Head : scale", &scales[2].x, 0.01f);*/
 
-		ImGui::Text("c:%f, %f, %f", c.x, c.y, c.z);
+		/*ImGui::Text("c:%f, %f, %f", c.x, c.y, c.z);
 		ImGui::Text("d:%f, %f, %f", d.x, d.y, d.z);
 		ImGui::Text("e:%f, %f, %f", e.x, e.y, e.z);
 		ImGui::Text("f:%f, %f, %f", f.x, f.y, f.z);
@@ -306,7 +341,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			subMatrix.m[1][2], subMatrix.m[1][3], subMatrix.m[2][0],
 			subMatrix.m[2][1], subMatrix.m[2][2], subMatrix.m[2][3],
 			subMatrix.m[3][0], subMatrix.m[3][1], subMatrix.m[3][2],
-			subMatrix.m[3][3]);
+			subMatrix.m[3][3]);*/
+		if (ImGui::Button("Start")) {
+			start = true;
+		}
+		
 
 		ImGui::End();
 
@@ -411,7 +450,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], viewProjectionMatrix, viewportMatrix, 0x0000FFFF);
 
-		DrawArm(worldMatrix[0], worldMatrix[1], worldMatrix[2], viewProjectionMatrix, viewportMatrix);
+		//DrawArm(worldMatrix[0], worldMatrix[1], worldMatrix[2], viewProjectionMatrix, viewportMatrix);
+
+		Segment segment_sp = {
+			.origin{spring.anchor},
+			.diff{ball.position},
+		};
+		DrawSegment(segment_sp, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawBall(ball, viewProjectionMatrix, viewportMatrix, ball.color);
+
+		
 
 		///
 		/// ↑描画処理ここまで
