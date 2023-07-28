@@ -18,4 +18,9 @@ struct Ball {
 	unsigned int color; // ボールの色
 };
 
+struct Circle {
+	Vector3 center; // 円の中心
+	float radius; // 円の半径
+};
+
 void DrawBall(const Ball& ball, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);

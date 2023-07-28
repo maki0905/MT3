@@ -148,12 +148,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spring.dampingCoefficient = 2.0f;
 
 	Ball ball{};
-	ball.position = { 1.2f, 0.0f, 0.0f };
+	ball.position = { 0.8f, 0.0f, 0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
-	ball.color = BLUE;
+	ball.color = WHITE;
+
+	Circle circle{};
+	circle.center = { 0.0f, 0.0f, 0.0f };
+	circle.radius = 0.8f;
 
 	float deltaTime = 1.0f / 60.0f;
+
+	float angle = 0.0f;
+	float angularVelocity = 3.14f;
 
 	// カメラの位置と角度
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
@@ -210,7 +217,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		if (start) {
-			Vector3 diff = ball.position - spring.anchor;
+			/*Vector3 diff = ball.position - spring.anchor;
 			float length = Length(diff);
 			if (length != 0.0f) {
 				Vector3 direction = Normalize(diff);
@@ -223,7 +230,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 
 			ball.velocity += ball.acceleration * deltaTime;
-			ball.position += ball.velocity * deltaTime;
+			ball.position += ball.velocity * deltaTime;*/
+
+			angle += angularVelocity * deltaTime;
+			ball.position.x = circle.center.x + std::cos(angle) * circle.radius;
+			ball.position.y = circle.center.y + std::sin(angle) * circle.radius;
+			ball.position.z = circle.center.z;
 		}
 		
 
@@ -452,11 +464,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//DrawArm(worldMatrix[0], worldMatrix[1], worldMatrix[2], viewProjectionMatrix, viewportMatrix);
 
-		Segment segment_sp = {
+		/*Segment segment_sp = {
 			.origin{spring.anchor},
 			.diff{ball.position},
 		};
-		DrawSegment(segment_sp, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawSegment(segment_sp, viewProjectionMatrix, viewportMatrix, WHITE);*/
 		DrawBall(ball, viewProjectionMatrix, viewportMatrix, ball.color);
 
 		
