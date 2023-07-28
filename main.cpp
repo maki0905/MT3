@@ -148,7 +148,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spring.dampingCoefficient = 2.0f;
 
 	Ball ball{};
-	ball.position = { 0.8f, 0.0f, 0.0f };
+	ball.position = { 0.5f, 0.38f, 0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = WHITE;
@@ -157,10 +157,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	circle.center = { 0.0f, 0.0f, 0.0f };
 	circle.radius = 0.8f;
 
+	Pendulum pendulum;
+	pendulum.anchor = { 0.0f, 1.0f, 0.0f };
+	pendulum.length = 0.8f;
+	pendulum.angle = 0.7f;
+	pendulum.angularVelocity = 0.0f;
+	pendulum.angularAcceleration = 0.0f;
+
 	float deltaTime = 1.0f / 60.0f;
 
-	float angle = 0.0f;
-	float angularVelocity = 3.14f;
+	/*float angle = 0.0f;
+	float angularVelocity = 3.14f;*/
 
 	// カメラの位置と角度
 	Vector3 cameraTranslate{ 0.0f, 1.9f, -6.49f };
@@ -217,6 +224,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		if (start) {
+			// バネ
 			/*Vector3 diff = ball.position - spring.anchor;
 			float length = Length(diff);
 			if (length != 0.0f) {
@@ -232,10 +240,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.velocity += ball.acceleration * deltaTime;
 			ball.position += ball.velocity * deltaTime;*/
 
-			angle += angularVelocity * deltaTime;
+			// 等速円運動
+			/*angle += angularVelocity * deltaTime;
 			ball.position.x = circle.center.x + std::cos(angle) * circle.radius;
 			ball.position.y = circle.center.y + std::sin(angle) * circle.radius;
-			ball.position.z = circle.center.z;
+			ball.position.z = circle.center.z;*/
+
+			// 振り子運動
+			pendulum.angularAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
+			pendulum.angularVelocity += pendulum.angularAcceleration * deltaTime;
+			pendulum.angle += pendulum.angularVelocity * deltaTime;
+			ball.position.x = pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length;
+			ball.position.y = pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
+			ball.position.z = pendulum.anchor.z;
 		}
 		
 
@@ -469,6 +486,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			.diff{ball.position},
 		};
 		DrawSegment(segment_sp, viewProjectionMatrix, viewportMatrix, WHITE);*/
+		Segment segment_pe = {
+			.origin{pendulum.anchor},
+			.diff{ball.position - pendulum.anchor},
+		};
+		DrawSegment(segment_pe, viewProjectionMatrix, viewportMatrix, WHITE);
 		DrawBall(ball, viewProjectionMatrix, viewportMatrix, ball.color);
 
 		

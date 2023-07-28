@@ -23,4 +23,12 @@ struct Circle {
 	float radius; // 円の半径
 };
 
+struct Pendulum {
+	Vector3 anchor; // アンカーポイント。固定された端の位置
+	float length; // 比もの長さ
+	float angle; // 現在の角度
+	float angularVelocity; // 角速度ω
+	float angularAcceleration; // 角加速度
+};
+
 void DrawBall(const Ball& ball, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
