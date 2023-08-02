@@ -164,6 +164,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	pendulum.angularVelocity = 0.0f;
 	pendulum.angularAcceleration = 0.0f;
 
+	ConicalPendulum conicalPendulum;
+	conicalPendulum.anchor = { 0.0f, 1.0f, 0.0f };
+	conicalPendulum.length = 0.8f;
+	conicalPendulum.halfApexAngle = 0.7f;
+	conicalPendulum.angle = 0.0f;
+	conicalPendulum.angularVelocity = 0.0f;
+
 	float deltaTime = 1.0f / 60.0f;
 
 	/*float angle = 0.0f;
@@ -247,12 +254,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.position.z = circle.center.z;*/
 
 			// 振り子運動
-			pendulum.angularAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
+			/*pendulum.angularAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
 			pendulum.angularVelocity += pendulum.angularAcceleration * deltaTime;
 			pendulum.angle += pendulum.angularVelocity * deltaTime;
 			ball.position.x = pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length;
 			ball.position.y = pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
-			ball.position.z = pendulum.anchor.z;
+			ball.position.z = pendulum.anchor.z;*/
+
+			// 円錐振り子
+			conicalPendulum.angularVelocity = std::sqrt(9.8f / (conicalPendulum.length * std::cos(conicalPendulum.halfApexAngle)));
+			conicalPendulum.angle += conicalPendulum.angularVelocity * deltaTime;
+			float radius = std::sin(conicalPendulum.halfApexAngle) * conicalPendulum.length;
+			float height = std::cos(conicalPendulum.halfApexAngle) * conicalPendulum.length;
+			ball.position.x = conicalPendulum.anchor.x + std::cos(conicalPendulum.angle) * radius;
+			ball.position.y = conicalPendulum.anchor.y - height;
+			ball.position.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;
 		}
 		
 
@@ -486,11 +502,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			.diff{ball.position},
 		};
 		DrawSegment(segment_sp, viewProjectionMatrix, viewportMatrix, WHITE);*/
-		Segment segment_pe = {
+		/*Segment segment_pe = {
 			.origin{pendulum.anchor},
 			.diff{ball.position - pendulum.anchor},
 		};
-		DrawSegment(segment_pe, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawSegment(segment_pe, viewProjectionMatrix, viewportMatrix, WHITE);*/
+		Segment segment_cp = {
+			.origin{conicalPendulum.anchor},
+			.diff{ball.position - conicalPendulum.anchor}
+		};
+		DrawSegment(segment_cp, viewProjectionMatrix, viewportMatrix, WHITE);
 		DrawBall(ball, viewProjectionMatrix, viewportMatrix, ball.color);
 
 		
