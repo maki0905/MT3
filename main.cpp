@@ -388,9 +388,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			subMatrix.m[3][0], subMatrix.m[3][1], subMatrix.m[3][2],
 			subMatrix.m[3][3]);*/
 		if (ImGui::Button("Start")) {
-			start = true;
+			if (start) {
+				start = false;
+			}
+			else {
+				start = true;
+			}
 		}
-		
+
+		ImGui::DragFloat("Lenght", &conicalPendulum.length, 0.01f);
+		ImGui::DragFloat("HalfApexAngle", &conicalPendulum.halfApexAngle, 0.01f);
 
 		ImGui::End();
 
