@@ -34,3 +34,10 @@ void DrawBall(const Ball& ball, const Matrix4x4& viewProjectionMatrix, const Mat
 
 	}
 }
+
+Vector3 Reflect(const Vector3& input, const Vector3& normal)
+{
+	Vector3 result;
+	result = Subtract(input, Multiply(2 * Dot(input, normal), normal));
+	return result;
+}

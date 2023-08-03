@@ -40,3 +40,5 @@ struct ConicalPendulum {
 };
 
 void DrawBall(const Ball& ball, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+
+Vector3 Reflect(const Vector3& input, const Vector3& normal);

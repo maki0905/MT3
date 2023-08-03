@@ -76,7 +76,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.radius{0.5f}
 	};*/
 
-	//Plane plane = { {0.0f, 1.0f, 0.0f}, 0.5f };
+	Plane plane;
+	plane.normal = Normalize({ -0.2f, 0.9f, -0.3f });
+	plane.distance = 0.0f;
 
 	/*Segment segment = {
 		.origin{0.0f, -0.6f, 0.0f},
@@ -148,7 +150,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spring.dampingCoefficient = 2.0f;
 
 	Ball ball{};
-	ball.position = { 0.5f, 0.38f, 0.0f };
+	ball.position = { 0.8f, 1.2f, 0.3f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = WHITE;
@@ -172,6 +174,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	conicalPendulum.angularVelocity = 0.0f;
 
 	float deltaTime = 1.0f / 60.0f;
+
+	float e = 0.7f;
 
 	/*float angle = 0.0f;
 	float angularVelocity = 3.14f;*/
@@ -262,13 +266,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.position.z = pendulum.anchor.z;*/
 
 			// 円錐振り子
-			conicalPendulum.angularVelocity = std::sqrt(9.8f / (conicalPendulum.length * std::cos(conicalPendulum.halfApexAngle)));
+			/*conicalPendulum.angularVelocity = std::sqrt(9.8f / (conicalPendulum.length * std::cos(conicalPendulum.halfApexAngle)));
 			conicalPendulum.angle += conicalPendulum.angularVelocity * deltaTime;
 			float radius = std::sin(conicalPendulum.halfApexAngle) * conicalPendulum.length;
 			float height = std::cos(conicalPendulum.halfApexAngle) * conicalPendulum.length;
 			ball.position.x = conicalPendulum.anchor.x + std::cos(conicalPendulum.angle) * radius;
 			ball.position.y = conicalPendulum.anchor.y - height;
-			ball.position.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;
+			ball.position.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;*/
+
+			ball.velocity += ball.acceleration * deltaTime;
+			ball.position += ball.velocity * deltaTime;
+			if (IsCollision(Sphere{ ball.position, ball.radius }, plane)) {
+				ball.velocity = Reflect(ball.velocity, plane.normal) * e;
+			}
 		}
 		
 
@@ -393,6 +403,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			else {
 				start = true;
+				ball.position = { 0.8f, 1.2f, 0.3f };
+				ball.acceleration = { 0.0f, -9.8f, 0.0f };
+				ball.velocity = { 0.0f, 0.0f, 0.0f };
 			}
 		}
 
@@ -514,12 +527,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			.diff{ball.position - pendulum.anchor},
 		};
 		DrawSegment(segment_pe, viewProjectionMatrix, viewportMatrix, WHITE);*/
-		Segment segment_cp = {
+		/*Segment segment_cp = {
 			.origin{conicalPendulum.anchor},
 			.diff{ball.position - conicalPendulum.anchor}
 		};
-		DrawSegment(segment_cp, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawSegment(segment_cp, viewProjectionMatrix, viewportMatrix, WHITE);*/
 		DrawBall(ball, viewProjectionMatrix, viewportMatrix, ball.color);
+		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, WHITE);
 
 		
 
