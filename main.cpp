@@ -76,9 +76,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.radius{0.5f}
 	};*/
 
-	Plane plane;
+	/*Plane plane;
 	plane.normal = Normalize({ -0.2f, 0.9f, -0.3f });
-	plane.distance = 0.0f;
+	plane.distance = 0.0f;*/
 
 	/*Segment segment = {
 		.origin{0.0f, -0.6f, 0.0f},
@@ -144,16 +144,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 
 	Spring spring{};
-	spring.anchor = { 0.0f, 0.0f, 0.0f };
-	spring.naturallength = 1.0f;
+	spring.anchor = { 0.0f, 1.0f, 0.0f };
+	spring.naturallength = 0.7f;
 	spring.stiffness = 100.0f;
 	spring.dampingCoefficient = 2.0f;
 
 	Ball ball{};
-	ball.position = { 0.8f, 1.2f, 0.3f };
+	ball.position = { 0.8f, 0.2f, 0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
-	ball.color = WHITE;
+	ball.color = BLUE;
 
 	Circle circle{};
 	circle.center = { 0.0f, 0.0f, 0.0f };
@@ -175,7 +175,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float deltaTime = 1.0f / 60.0f;
 
-	float e = 0.7f;
+	//float e = 0.7f;
 
 	/*float angle = 0.0f;
 	float angularVelocity = 3.14f;*/
@@ -236,7 +236,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if (start) {
 			// バネ
-			/*Vector3 diff = ball.position - spring.anchor;
+			Vector3 diff = ball.position - spring.anchor;
 			float length = Length(diff);
 			if (length != 0.0f) {
 				Vector3 direction = Normalize(diff);
@@ -248,8 +248,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				ball.acceleration = force / ball.mass;
 			}
 
-			ball.velocity += ball.acceleration * deltaTime;
-			ball.position += ball.velocity * deltaTime;*/
+			ball.velocity += (ball.acceleration + kGravity) * deltaTime;
+			ball.position += ball.velocity * deltaTime;
 
 			// 等速円運動
 			/*angle += angularVelocity * deltaTime;
@@ -274,11 +274,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.position.y = conicalPendulum.anchor.y - height;
 			ball.position.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;*/
 
-			ball.velocity += ball.acceleration * deltaTime;
+			/*ball.velocity += ball.acceleration * deltaTime;
 			ball.position += ball.velocity * deltaTime;
 			if (IsCollision(Sphere{ ball.position, ball.radius }, plane)) {
 				ball.velocity = Reflect(ball.velocity, plane.normal) * e;
-			}
+			}*/
 		}
 		
 
@@ -403,9 +403,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			else {
 				start = true;
-				ball.position = { 0.8f, 1.2f, 0.3f };
+				/*ball.position = { 0.8f, 1.2f, 0.3f };
 				ball.acceleration = { 0.0f, -9.8f, 0.0f };
-				ball.velocity = { 0.0f, 0.0f, 0.0f };
+				ball.velocity = { 0.0f, 0.0f, 0.0f };*/
+
+				ball.position = { 0.8f, 0.2f, 0.0f };
 			}
 		}
 
@@ -517,11 +519,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//DrawArm(worldMatrix[0], worldMatrix[1], worldMatrix[2], viewProjectionMatrix, viewportMatrix);
 
-		/*Segment segment_sp = {
+		Segment segment_sp = {
 			.origin{spring.anchor},
-			.diff{ball.position},
+			.diff{ball.position - spring.anchor},
 		};
-		DrawSegment(segment_sp, viewProjectionMatrix, viewportMatrix, WHITE);*/
+		DrawSegment(segment_sp, viewProjectionMatrix, viewportMatrix, WHITE);
 		/*Segment segment_pe = {
 			.origin{pendulum.anchor},
 			.diff{ball.position - pendulum.anchor},
@@ -532,8 +534,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			.diff{ball.position - conicalPendulum.anchor}
 		};
 		DrawSegment(segment_cp, viewProjectionMatrix, viewportMatrix, WHITE);*/
+
+
 		DrawBall(ball, viewProjectionMatrix, viewportMatrix, ball.color);
-		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, WHITE);
+		//DrawPlane(plane, viewProjectionMatrix, viewportMatrix, WHITE);
 
 		
 
